@@ -1,25 +1,60 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+	
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:2.6.5'
+    }
+}
+
 plugins {
+
+    
     id 'com.github.blindpirate.gogradle' version '0.7.0'
 }
 
+import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
+
+
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+
 golang {
-    packagePath = 'redpatchtech/postmurum/services' // go import path of project to be built, NOT local file system path!
+    packagePath = 'postmurum' // go import path of project to be built, NOT local file system path!
 }
 dependencies {
 
 	golang {
-	        build 'github.com/gin-gonic/gin@v1.2' 
-	        
+	        build 'github.com/gocraft/web' 
+			build 'github.com/gin-gonic/contrib/sessions'
+	        build 'github.com/jinzhu/gorm' 
+			build 'github.com/caarlos0/env'
+		    build "golang.org/x/oauth2"
+		    build "golang.org/x/oauth2/google"
+			
 	    }
+	
 }
+
+
+
+
+
+
 
 
 build.dependsOn check 
 
+
+
 build {
-    targetPlatform = ['linux-386','darwin-amd64']
-	outputLocation = './postmurum${GOEXE}'
-    go 'build -o ./postmurum${GOOS}_${GOARCH}${GOEXE} redpatchtech/postmurum/services/src'
+    
+	
+    go 'build -o ./postmurum${GOEXE} postmurum/src '
 }
 
 task v(type: com.github.blindpirate.gogradle.Go){
@@ -30,3 +65,12 @@ task ls(type: com.github.blindpirate.gogradle.Go){
     dependsOn v 
     run 'ls'
 }
+
+
+
+task dockerLaunch(type: DefaultTask){
+	exec { commandLine=["ls" ,"-la"]}
+}
+
+// Create a task using the task type
+//task launchPostgress(type: DockerHelper)
