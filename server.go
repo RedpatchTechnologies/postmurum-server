@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/RedPatchTechnologies/server/handlers"
-	"github.com/RedPatchTechnologies/server/middleware"
+	"github.com/RedPatchTechnologies/postmurum-server/handlers"
+	"github.com/RedPatchTechnologies/postmurum-server/middleware"
 	"github.com/caarlos0/env"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
