@@ -1,0 +1,1 @@
+add_column("organization_admins", "organization_id", "uuid", {})

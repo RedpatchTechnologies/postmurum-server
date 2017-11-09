@@ -1,6 +1,7 @@
 version: '2'
 services:
   postgresdb:
+    restart: always
     container_name: postmurum-datastore
     image: postgres:9.6.3
     ports:
@@ -11,9 +12,6 @@ services:
     command: postgres
   web:
     build: .
-    links:
-      - gradle
-      - java
     volumes:
       - .:/go/src/go-with-compose
     working_dir: /go/src/go-with-compose

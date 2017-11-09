@@ -54,7 +54,7 @@ build.dependsOn check
 build {
     
 	
-    go 'build -o ./postmurum${GOEXE} postmurum/src '
+    go 'build -o ./postmurum${GOEXE} . '
 }
 
 task v(type: com.github.blindpirate.gogradle.Go){
