@@ -1,0 +1,1 @@
+docker-compose exec go  bash -c "cd bootstrap && go build && ./bootstrap"
