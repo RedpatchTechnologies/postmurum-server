@@ -5,8 +5,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/RedPatchTechnologies/postmurum-server/models"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/markbates/pop"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"io/ioutil"
@@ -56,6 +58,24 @@ func init() {
 
 // IndexHandler handels /.
 func IndexHandler(c *gin.Context) {
+
+	db, dberr := pop.Connect("development")
+	if dberr != nil {
+		log.Panic(dberr)
+	}
+
+	fmt.Printf("db (index handler) asdf is %+v\n", db)
+
+	query := models.DB
+	users := []models.Organization{}
+	err := query.All(&users)
+	fmt.Printf("users is %+v\n", users)
+
+	if err != nil {
+		fmt.Printf("fetch all orgs error: %v\n", err)
+
+	}
+
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 }
 func AuthHandler(c *gin.Context) {
