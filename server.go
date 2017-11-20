@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	Port         int  `env:"PORT" envDefault:"8080"`
+	Port         int  `env:"PORT" envDefault:"3000"`
 	IsProduction bool `env:"PRODUCTION" envDefault:false`
 }
 

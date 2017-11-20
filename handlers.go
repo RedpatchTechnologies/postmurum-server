@@ -64,7 +64,7 @@ func IndexHandler(c *gin.Context) {
 		log.Panic(dberr)
 	}
 
-	fmt.Printf("db (index handler) asdf is %+v\n", db)
+	fmt.Printf("db (index handler)  %+v\n", db)
 
 	query := models.DB
 	users := []models.Organization{}
