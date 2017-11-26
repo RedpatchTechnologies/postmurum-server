@@ -18,3 +18,4 @@ vendor
 certs
 db/
 postmurum-server
+*DS_Store
