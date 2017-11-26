@@ -1,0 +1,3 @@
+create_table("organization_admins", func(t) {
+	t.Column("id", "uuid", {"primary": true})
+})

@@ -1,0 +1,13 @@
+3510280852
+
+{
+    "_id": "postmurum-dev1.murum_dev_user",
+    "user": "murum_dev_user",
+    "db": "postmurum-dev1",
+    "roles": [
+        {
+            "role": "dbOwner",
+            "db": "postmurum-dev1"
+        }
+    ]
+}
