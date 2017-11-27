@@ -29,6 +29,16 @@ services:
      links:
         - postgres
      #entrypoint: ./wait-for-postgres.sh postgres 5432
+  frontend:
+     build:
+       context: ./frontend
+       args:
+          app_env: ${APP_ENV}
+     volumes:
+       - ./frontend/src:/frontend/src 
+     ports:
+       - "3000:3000"
+  
   proxy:
     image: nginx:latest
     ports:
@@ -48,3 +58,4 @@ services:
 
 volumes:
   db-data:
+  front-data:
