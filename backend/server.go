@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	Port         int  `env:"PORT" envDefault:"3000"`
+	Port         int  `env:"PORT" envDefault:"8080"`
 	IsProduction bool `env:"PRODUCTION" envDefault:false`
 }
 
@@ -23,6 +23,7 @@ func main() {
 
 	router := gin.Default()
 	store := sessions.NewCookieStore([]byte(RandToken(64)))
+	// store
 	router.Use(sessions.Sessions("postmurumsession", store))
 
 	router.Static("/css", "./static/css")
@@ -32,6 +33,7 @@ func main() {
 	router.GET("/", IndexHandler)
 	router.GET("/login", LoginHandler)
 	router.GET("/oauthcallback", AuthHandler)
+	router.GET("/authtoken", AuthTokenHandler)
 
 	//dev purposes
 	router.GET("/org", OrgHandler)

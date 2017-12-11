@@ -20,12 +20,12 @@ services:
          # with ip and port info for the postgres container
          # also creates entries in /etc/hosts with ip info
      ports:
-         - "3000" # this is port i'm exposing in the container
+         - "8080:8080" # this is port i'm exposing in the container
      volumes: 
          - /go/src/   
          - '.:/my_app'
      depends_on:
-        - postgres      
+        - postgres
      links:
         - postgres
      #entrypoint: ./wait-for-postgres.sh postgres 5432
@@ -52,6 +52,7 @@ services:
         - postgres  
     links:
         - go:app # [other container]:[alias in this container]
+        - frontend:app
           # creates environment variables in proxy container
           # with ip and port info for go container
           # also creates entries in /etc/hosts with ip info         

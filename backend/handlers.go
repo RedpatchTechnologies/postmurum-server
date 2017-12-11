@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/RedPatchTechnologies/postmurum-server/models"
+	"github.com/RedPatchTechnologies/postmurum-server/backend/models"
 	//"github.com/adam-hanna/jwt-auth/jwt"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -21,6 +21,10 @@ import (
 
 var cred Credentials
 var conf *oauth2.Config
+
+type AuthTokenResponse struct {
+	AuthToken string
+}
 
 // Credentials which stores google ids.
 type Credentials struct {
@@ -50,10 +54,10 @@ func init() {
 	conf = &oauth2.Config{
 		ClientID:     cred.Cid,
 		ClientSecret: cred.Csecret,
-		RedirectURL:  "http://127.0.0.1:3000/oauthcallback",
+		RedirectURL:  "http://localhost/api/oauthcallback",
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
-			"https://www.googleapis.com/auth/cloud-platform",
+			//"https://www.googleapis.com/auth/cloud-platform",
 
 			// You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
 		},
@@ -87,9 +91,9 @@ func AuthHandler(c *gin.Context) {
 	// Handle the exchange code to initiate a transport.
 	session := sessions.Default(c)
 	retrievedState := session.Get("state")
-	log.Printf("Stored session: %v\n", retrievedState)
-	log.Printf("Stored session: %v\n", c.Query("state"))
-	if retrievedState != c.Query("state") {
+	queryState := c.Request.URL.Query().Get("state")
+
+	if retrievedState != queryState {
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", retrievedState))
 		return
 	}
@@ -115,14 +119,26 @@ func AuthHandler(c *gin.Context) {
 	defer email.Body.Close()
 	data, _ := ioutil.ReadAll(email.Body)
 	log.Println("Email body: ", string(data))
-	c.Status(http.StatusOK)
+
+	token := session.Get("secureToken")
+	log.Println("token is: ", token)
+
+	var authTokenForUser = "somesortofauthtoken"
+
+	session.Set(token, authTokenForUser)
+	session.Save()
+	c.Redirect(http.StatusFound, "http://localhost/finallogin")
 }
 
 // LoginHandler handles the login procedure.
 func LoginHandler(c *gin.Context) {
+
+	token := c.Request.URL.Query().Get("token")
+
 	state := RandToken(32)
 	session := sessions.Default(c)
 	session.Set("state", state)
+	session.Set("secureToken", token)
 	session.Save()
 	log.Printf("Login: Stored session: %v\n", state)
 	link := getLoginURL(state)
@@ -159,10 +175,32 @@ func OrgHandler(c *gin.Context) {
 	err := query.All(&users)
 	fmt.Printf("users is %+v\n", users)
 
+	c.Header("Access-Control-Allow-Origin", "*")
+
 	if err != nil {
 		fmt.Printf("fetch all orgs error: %v\n", err)
 
 	}
 	c.JSON(http.StatusOK, users)
+
 	//c.HTML(http.StatusOK, "index.tmpl", gin.H{})
+}
+
+func AuthTokenHandler(c *gin.Context) {
+
+	token := c.Request.URL.Query().Get("token")
+	fmt.Printf("AuthTokenHandler token is %+v\n", token)
+	session := sessions.Default(c)
+	fmt.Printf("AuthTokenHandler session is %+v\n", session)
+	authToken := session.Get(token)
+	fmt.Printf("AuthTokenHandler authToken is %+v\n", authToken)
+	//session.Set("authtoken", authTokenForUser)
+
+	//response := `{"authtoken":"authToken"}`
+
+	authTokenResponse := AuthTokenResponse{}
+	authTokenResponse.AuthToken = authToken.(string)
+	fmt.Printf("AuthTokenHandler authTokenResponse is %+v\n", authTokenResponse)
+
+	c.JSON(http.StatusOK, authTokenResponse)
 }
